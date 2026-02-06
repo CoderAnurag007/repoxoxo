@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --romantic-pink: #ff6b9d;
+  --romantic-pink-light: #ffb3c6;
+  --romantic-pink-dark: #e91e63;
+  --romantic-white: #fffafc;
+  --romantic-black: #1a0a0f;
+  --glow-pink: rgba(255, 107, 157, 0.4);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(180deg, var(--romantic-white) 0%, #fff0f5 50%, #ffe4ec 100%);
+  color: var(--romantic-black);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Smooth section transitions */
+.section-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.section-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Falling hearts keyframes */
+@keyframes fall {
+  0% {
+    transform: translateY(-10vh) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.heart-particle {
+  position: fixed;
+  pointer-events: none;
+  font-size: 1rem;
+  color: var(--romantic-pink);
+  opacity: 0.6;
+  animation: fall linear forwards;
+  z-index: 1;
+}
+
+/* Book spine shadow */
+.book-glow {
+  box-shadow: 0 0 60px var(--glow-pink), 0 0 100px rgba(233, 30, 99, 0.2);
+}
+
+/* Button hover glow */
+.btn-romantic {
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 107, 157, 0.3);
+}
+
+.btn-romantic:hover {
+  box-shadow: 0 6px 30px rgba(255, 107, 157, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Selection color */
+::selection {
+  background: var(--romantic-pink-light);
+  color: var(--romantic-black);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ffe4ec;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--romantic-pink);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--romantic-pink-dark);
+}
