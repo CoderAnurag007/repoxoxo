@@ -26,9 +26,9 @@ export default function Home() {
 
     const sections = [
       { ref: bookRef, y: 40 },
-      { ref: timelineRef, y: 30 },
       { ref: memoriesRef, y: 30 },
       { ref: proposalRef, y: 30 },
+      { ref: timelineRef, y: 30 },
     ];
 
     sections.forEach(({ ref, y }) => {
@@ -65,14 +65,14 @@ export default function Home() {
           <section ref={bookRef}>
             <BookSection />
           </section>
-          <section ref={timelineRef}>
-            <TimelineSection />
-          </section>
           <section ref={memoriesRef}>
             <MemoriesSection />
           </section>
           <section ref={proposalRef}>
             <ProposalSection />
+          </section>
+          <section ref={timelineRef}>
+            <TimelineSection />
           </section>
         </>
       )}

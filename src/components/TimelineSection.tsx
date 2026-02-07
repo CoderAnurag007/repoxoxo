@@ -1,59 +1,92 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
+import {
+  VALENTINE_DAYS,
+  getLatestUnlockedDay,
+  isDayUnlocked,
+  type ValentineDay,
+} from "./valentine/valentineDays";
+import DayIllustration from "./valentine/DayIllustration";
 
-const START_DATE = new Date("2025-07-31T00:00:00");
+const FEB_YEAR = 2026;
 
-function useTimeSince() {
-  const [diff, setDiff] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-
-  useEffect(() => {
-    const tick = () => {
-      const now = new Date();
-      const total = Math.max(0, Math.floor((now.getTime() - START_DATE.getTime()) / 1000));
-      const days = Math.floor(total / 86400);
-      const hours = Math.floor((total % 86400) / 3600);
-      const minutes = Math.floor((total % 3600) / 60);
-      const seconds = total % 60;
-      setDiff({ days, hours, minutes, seconds });
-    };
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  return diff;
+function formatDateLabel(day: number) {
+  return `${day} Feb`;
 }
 
 export default function TimelineSection() {
-  const { days, hours, minutes, seconds } = useTimeSince();
+  const today = useMemo(() => new Date(), []);
+  const latestUnlocked = useMemo(() => getLatestUnlockedDay(today), [today]);
+  const activeDay: ValentineDay | undefined = useMemo(
+    () => VALENTINE_DAYS.find((d) => d.date === latestUnlocked),
+    [latestUnlocked]
+  );
 
   return (
-    <section className="relative flex min-h-screen flex-col items-center justify-center px-6 py-24">
-      <h2 className="font-script mb-4 text-4xl font-bold text-romantic-pink-dark sm:text-5xl md:text-6xl">
-        Our Journey ❤️
+    <section className="relative flex min-h-screen flex-col items-center px-6 py-24">
+      <h2 className="font-script mb-2 text-4xl font-bold text-romantic-pink-dark sm:text-5xl md:text-6xl">
+        Valentine&apos;s Week
       </h2>
-      <p className="font-romantic mb-12 text-center text-lg text-black/80 sm:text-xl">
-        We first talked on 31 July 2025
+      <p className="font-romantic mb-12 text-center text-lg text-black/70 sm:text-xl">
+        7 – 15 February 2026 • Each day unlocks a little more love
       </p>
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-        {[
-          { value: days, label: "Days" },
-          { value: hours, label: "Hours" },
-          { value: minutes, label: "Minutes" },
-          { value: seconds, label: "Seconds" },
-        ].map(({ value, label }) => (
-          <div
-            key={label}
-            className="flex min-w-[80px] flex-col items-center rounded-2xl bg-white/80 px-6 py-4 shadow-lg ring-1 ring-romantic-pink/20"
-          >
-            <span className="font-romantic text-3xl font-bold text-romantic-pink-dark tabular-nums sm:text-4xl">
-              {String(value).padStart(2, "0")}
-            </span>
-            <span className="text-sm font-medium text-black/70">{label}</span>
-          </div>
-        ))}
+
+      {/* Timeline strip: all 9 days */}
+      <div className="mb-14 flex w-full max-w-4xl flex-wrap items-center justify-center gap-2 sm:gap-3">
+        {VALENTINE_DAYS.map((day) => {
+          const unlocked = isDayUnlocked(day.date, today);
+          return (
+            <div
+              key={day.date}
+              className={`rounded-xl px-3 py-2 text-center sm:px-4 sm:py-2.5 ${
+                unlocked
+                  ? "bg-romantic-pink/20 ring-2 ring-romantic-pink text-romantic-pink-dark"
+                  : "bg-black/5 text-black/50"
+              } ${day.date === latestUnlocked ? "ring-2 ring-romantic-pink-dark ring-offset-2" : ""}`}
+            >
+              <span className="font-romantic block text-xs font-semibold sm:text-sm">
+                {formatDateLabel(day.date)}
+              </span>
+              <span className="font-romantic block text-xs sm:text-sm">
+                {unlocked ? day.name : "🔒"}
+              </span>
+            </div>
+          );
+        })}
       </div>
+
+      {/* Active day: illustration + metaphorical lines */}
+      {activeDay && (
+        <div className="flex w-full max-w-2xl flex-col items-center">
+          <div className="mb-6 flex flex-col items-center">
+            <DayIllustration componentKey={activeDay.componentKey} />
+            <h3 className="font-script mt-4 text-2xl font-bold text-romantic-pink-dark sm:text-3xl">
+              {activeDay.name}
+            </h3>
+            <p className="font-romantic text-sm text-black/60 sm:text-base">
+              {activeDay.subtitle}
+            </p>
+          </div>
+          <div className="space-y-4 text-center">
+            {activeDay.lines.map((line, i) => (
+              <p
+                key={i}
+                className="font-romantic text-base italic leading-relaxed text-black/85 sm:text-lg"
+              >
+                &ldquo;{line}&rdquo;
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Locked message for future days */}
+      {latestUnlocked < 7 && (
+        <p className="font-romantic text-center text-black/60">
+          The first surprise unlocks on 7 February — Rose Day 🌹
+        </p>
+      )}
     </section>
   );
 }
