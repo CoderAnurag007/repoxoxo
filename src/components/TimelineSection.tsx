@@ -9,8 +9,6 @@ import {
 } from "./valentine/valentineDays";
 import DayIllustration from "./valentine/DayIllustration";
 
-const FEB_YEAR = 2026;
-
 function formatDateLabel(day: number) {
   return `${day} Feb`;
 }
